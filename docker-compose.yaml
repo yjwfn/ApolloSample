@@ -191,7 +191,7 @@ services:
     # - "apollo-configservice-fat"
     # - "apollo-configservice-uat"
     # - "apollo-configservice-pro"
-    - "apollo-adminservice-dev"
+    # - "apollo-adminservice-dev"
     # - "apollo-adminservice-fat"
     # - "apollo-adminservice-uat"
     # - "apollo-adminservice-pro"
@@ -202,7 +202,7 @@ services:
    ENV: dev
   ports:
     - 8090:8080
-  depends_on: 
+  depends_on:
     - apollo-configservice-dev
      
 

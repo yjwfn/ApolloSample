@@ -191,7 +191,7 @@ services:
     # - "apollo-configservice-fat"
     # - "apollo-configservice-uat"
     # - "apollo-configservice-pro"
-    # - "apollo-adminservice-dev"
+    - apollo-adminservice-dev
     # - "apollo-adminservice-fat"
     # - "apollo-adminservice-uat"
     # - "apollo-adminservice-pro"

@@ -1,0 +1,206 @@
+#坑一： mysql使用有对象设置环境变量无效
+#SQL目录： 注意要改成本地机器的
+
+version: "3"
+services:
+ mysql-dev:
+  image: mysql
+  # restart: always
+  environment:
+   - MYSQL_ROOT_PASSWORD=123456
+  expose:
+   - "3306"
+  volumes:
+    - /Users/yjwfn/bin/apollo/scripts/sql:/sql      
+
+ apollo-configservice-dev:  
+  image: rcntech/apollo-configservice:v1.2.0
+  environment: 
+   DATASOURCES_URL: jdbc:mysql://mysql-dev:3306/ApolloConfigDB?characterEncoding=utf8
+   DATASOURCES_USERNAME: root
+   DATASOURCES_PASSWORD: 123456
+   ENV: "dev"
+  expose:
+   - "8080"
+  depends_on:
+   - "mysql-dev"
+
+
+ apollo-adminservice-dev: 
+  image: rcntech/apollo-adminservice:v1.2.0
+  environment: 
+   DATASOURCES_URL: "jdbc:mysql://mysql-dev:3306/ApolloConfigDB?characterEncoding=utf8"
+   DATASOURCES_USERNAME: root
+   DATASOURCES_PASSWORD: 123456
+   ENV: "dev"
+  expose:
+   - "8080"
+  depends_on:
+   - "mysql-dev"
+   - "apollo-configservice-dev"
+
+#================= Fat =================        
+#  mysql-fat:
+#   image: mysql
+#   # restart: always
+#   environment:
+#    - MYSQL_ROOT_PASSWORD=123456
+#   expose:
+#    - "3306"
+
+#   volumes:
+#     - /Users/yjwfn/bin/apollo/scripts/sql:/sql      
+
+#  apollo-configservice-fat:  
+#   image: rcntech/apollo-configservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: jdbc:mysql://mysql-fat:3306/ApolloConfigDB?characterEncoding=utf8
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "fat"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-fat"
+ 
+
+
+#  apollo-adminservice-fat: 
+#   image: rcntech/apollo-adminservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: "jdbc:mysql://mysql-fat:3306/ApolloConfigDB?characterEncoding=utf8"
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "fat"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-fat"
+#    - "apollo-configservice-fat"
+ 
+
+# #================= uat =================        
+#  mysql-uat:
+#   image: mysql
+#   # restart: always
+#   environment:
+#     - MYSQL_ROOT_PASSWORD=123456
+#   expose:
+#    - "3306"
+ 
+#   volumes:
+#     - /Users/yjwfn/bin/apollo/scripts/sql:/sql      
+
+#  apollo-configservice-uat:  
+#   image: rcntech/apollo-configservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: jdbc:mysql://mysql-uat:3306/ApolloConfigDB?characterEncoding=utf8
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "uat"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-uat"
+ 
+
+
+#  apollo-adminservice-uat: 
+#   image: rcntech/apollo-adminservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: "jdbc:mysql://mysql-uat:3306/ApolloConfigDB?characterEncoding=utf8"
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "uat"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-uat"
+#    - "apollo-configservice-uat"
+
+# #================= pro =================        
+#  mysql-pro:
+#   image: mysql
+#   # restart: always
+#   environment:
+#    - MYSQL_ROOT_PASSWORD=123456
+#   expose:
+#    - "3306"
+ 
+#   volumes:
+#     - /Users/yjwfn/bin/apollo/scripts/sql:/sql      
+
+#  apollo-configservice-pro:  
+#   image: rcntech/apollo-configservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: jdbc:mysql://mysql-pro:3306/ApolloConfigDB?characterEncoding=utf8
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "pro"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-pro"
+
+#  apollo-adminservice-pro: 
+#   image: rcntech/apollo-adminservice:v1.2.0
+#   environment: 
+#    DATASOURCES_URL: "jdbc:mysql://mysql-pro:3306/ApolloConfigDB?characterEncoding=utf8"
+#    DATASOURCES_USERNAME: root
+#    DATASOURCES_PASSWORD: 123456
+#    ENV: "pro"
+#   expose:
+#    - "8080"
+#   depends_on:
+#    - "mysql-pro"
+#    - "apollo-configservice-pro"
+ 
+
+ mysql-portal:
+   image: mysql
+   # restart: always
+   environment:
+    - MYSQL_ROOT_PASSWORD=123456
+   expose:
+    - "3306"
+   volumes:
+   #这里改成本机的Apollo仓库的Sql目录
+    - /Users/yjwfn/bin/apollo/scripts/sql:/sql 
+
+ apollo-portal: 
+   image: rcntech/apollo-portal:v1.2.0
+   environment: 
+# ENV DEV_META_SERVICE_NAME="service-apollo-config-server-dev.sre"
+# ENV TEST_ALPHA_META_SERVICE_NAME="service-apollo-config-server-test-alpha.sre"
+# ENV TEST_BETA_META_SERVICE_NAME="service-apollo-config-server-test-beta.sre"
+# ENV PROD_META_SERVICE_NAME="service-apollo-config-server-prod.sre"
+    DEV_META_SERVICE_NAME: apollo-configservice-dev
+    TEST_ALPHA_META_SERVICE_NAME: apollo-configservice-fat
+    TEST_BETA_META_SERVICE_NAME: apollo-configservice-uat
+    PROD_META_SERVICE_NAME:  apollo-configservice-pro
+    DATASOURCES_URL: "jdbc:mysql://mysql-portal:3306/ApolloPortalDB?characterEncoding=utf8"
+    DATASOURCES_USERNAME: root
+    DATASOURCES_PASSWORD: 123456
+   # expose:
+   #  - "8070"
+   ports:
+    - 8070:8070
+   depends_on:
+    - mysql-portal
+    - apollo-configservice-dev
+    # - "apollo-configservice-fat"
+    # - "apollo-configservice-uat"
+    # - "apollo-configservice-pro"
+    - "apollo-adminservice-dev"
+    # - "apollo-adminservice-fat"
+    # - "apollo-adminservice-uat"
+    # - "apollo-adminservice-pro"
+
+ apollo-sample-dev:
+  image: apollo/apollo-sample:0.0.1-SNAPSHOT
+  ports:
+    - 8090:8080
+  depends_on: 
+    - apollo-configservice-dev
+     
+

@@ -198,6 +198,8 @@ services:
 
  apollo-sample-dev:
   image: apollo/apollo-sample:0.0.1-SNAPSHOT
+  environment:
+   ENV: dev
   ports:
     - 8090:8080
   depends_on: 
